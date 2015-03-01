@@ -1,0 +1,89 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class NPC : MonoBehaviour {
+	public int currentDirection;
+	public int nextDirection;
+	public Vector3 nextTurnDegree;
+	public float speed;
+	public float rotSpeed;
+	public Vector3 nextCheckPoint; //for turning
+	public bool interrupted = false;
+
+	public float temper;
+	public float courage;
+	// Use this for initialization
+	void Awake(){
+		nextCheckPoint = Vector3.zero;
+		nextDirection = -1;
+		nextTurnDegree = gameObject.transform.rotation.eulerAngles;
+		speed = 1.5f;
+		rotSpeed = 0.5f;
+		InitPersonality();
+	}
+	public void InitPersonality(){
+		temper = UnityEngine.Random.Range(0,1);
+		courage = UnityEngine.Random.Range(0,1);
+	}
+	void Start () {
+		StartCoroutine(NPCMove());
+	}
+	IEnumerator NPCMove(){
+		while(true){
+			yield return new WaitForSeconds(1f / 30f);
+			if(GameControl.gameState == (int) GameControl.GameState.PlayerNavigating){
+	        	FollowDirection();
+	        }
+		}
+	}
+
+	public void FollowDirection(){
+		float delta = speed * Time.deltaTime;
+
+		//Vector3 childEuler = childNPC.transform.eulerAngles;
+		if(nextDirection == 0 || nextDirection == 1){
+			//z
+			if(Mathf.Abs(transform.position.x -nextCheckPoint.x) < 0.05){
+				transform.eulerAngles = nextTurnDegree;
+				currentDirection = nextDirection;
+				nextDirection = -1;
+				nextCheckPoint = Vector3.zero;
+			}
+		}else if (nextDirection == 2 || nextDirection == 3){
+			//x
+			if(Mathf.Abs(transform.position.z -nextCheckPoint.z)< 0.05){
+				transform.eulerAngles = nextTurnDegree;
+				currentDirection = nextDirection;
+				nextDirection = -1;
+				nextCheckPoint = Vector3.zero;
+			}
+		}
+        
+        
+        if(interrupted)return;
+        Vector3 oldPos = transform.position;
+		if(currentDirection == 0){
+			transform.position += Vector3.forward * delta;
+		}else if(currentDirection ==1){
+			transform.position += Vector3.back * delta;
+		}else if(currentDirection ==2){
+			transform.position += Vector3.right * delta;
+		}else if(currentDirection == 3){
+			transform.position += Vector3.left * delta;
+		}
+		
+
+	}
+	
+	void OnTriggerEnter(Collider other){
+		Debug.Log("ouch");
+		if(other.gameObject.name.Equals("homelessPlayer")){
+			GameControl.player.GetComponent<PlayerController>().disableMove = true;
+			GameControl.gameState = (int)GameControl.GameState.HumanInteraction;
+			DialogueSystem.dialogueSystem.StartInteraction(temper, courage);
+		}
+	}
+
+
+	
+}
