@@ -12,6 +12,7 @@ public class NPC : MonoBehaviour {
 
 	public float temper;
 	public float courage;
+	public bool beggedToday = false;
 	// Use this for initialization
 	void Awake(){
 		nextCheckPoint = Vector3.zero;
@@ -19,10 +20,14 @@ public class NPC : MonoBehaviour {
 		nextTurnDegree = gameObject.transform.rotation.eulerAngles;
 		speed = 1.5f;
 		rotSpeed = 0.5f;
+		
+	}
+	void OnEnable(){
 		InitPersonality();
+		Debug.Log(temper);
 	}
 	public void InitPersonality(){
-		temper = UnityEngine.Random.Range(0,1);
+		temper = UnityEngine.Random.Range(0,10) / 10.0f;
 		courage = UnityEngine.Random.Range(0,1);
 	}
 	void Start () {
@@ -76,11 +81,13 @@ public class NPC : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider other){
-		Debug.Log("ouch");
 		if(other.gameObject.name.Equals("homelessPlayer")){
 			GameControl.player.GetComponent<PlayerController>().disableMove = true;
 			GameControl.gameState = (int)GameControl.GameState.HumanInteraction;
-			DialogueSystem.dialogueSystem.StartInteraction(temper, courage);
+			Debug.Log(temper);
+			beggedToday = true;
+			DialogueSystem.dialogueSystem.StartInteraction(temper, beggedToday);
+
 		}
 	}
 

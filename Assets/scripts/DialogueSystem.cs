@@ -9,13 +9,11 @@ public class DialogueSystem : MonoBehaviour {
 
 	public enum BegItem{
 		Money,
-		Food,
 	};
 	public GameObject diaglogueText;
 	public GameObject diaglogueCanvas;
 	public GameObject actionPanel;
-	public GameObject subactionPanelBadGuy;
-	public GameObject subactionPanelNeutralGuy;
+	public GameObject subactionPanel;
 	public GameObject decisionPanel;
 	public GameObject decisonRawImage;
 	public GameObject decisonQuantityText;
@@ -60,9 +58,7 @@ public class DialogueSystem : MonoBehaviour {
 		MainActions,
 		MainActionCancelDialogue,
 		MainActionBegMoney,
-		MainActionBegFood,
-		SubActionBegBadNPC,
-		SubActionBegNeutralNPC,
+		SubActionBeg,
 		Decision,
 		EndDialogue,
 		Test
@@ -76,11 +72,7 @@ public class DialogueSystem : MonoBehaviour {
 	// Use this for initialization
 	void Awake(){
 		dialogueSystem = this;
-		diaglogueCanvas.SetActive(false);
-		actionPanel.SetActive(false);
-		subactionPanelNeutralGuy.SetActive(false);
-		subactionPanelBadGuy.SetActive(false);
-		decisionPanel.SetActive(false);
+		ResetDialogueSys();
 
 		diaglogueTextComp = diaglogueText.GetComponent<Text>();
 		decisonQuantityTextComp = decisonQuantityText.GetComponent<Text>();
@@ -92,76 +84,64 @@ public class DialogueSystem : MonoBehaviour {
 	public void ShowMainActions(){
 		actionPanel.SetActive(true);
 	}
-	public void ShowSubactionsBadGuy(){
+	public void ShowSubactions(){
 		actionPanel.SetActive(false);
-		subactionPanelBadGuy.SetActive(true);
+		subactionPanel.SetActive(true);
 
 	}
-	public void ShowSubactionsNeutralGuy(){
-		actionPanel.SetActive(false);
-		subactionPanelNeutralGuy.SetActive(true);
-	}
-	public void StartInteraction(float NPCtemper, float NPCcourage){
+	public void StartInteraction(float NPCtemper, bool NPCbeggedToday){
 		//enable diaglogue canvas
 		//set init text
 		dialogueState = (int)DialogueState.Greeting;
 		diaglogueCanvas.SetActive(true);
-		StartCoroutine(Interaction(NPCtemper, NPCcourage));
+		StartCoroutine(Interaction(NPCtemper, NPCbeggedToday));
 	}
 	public void ShowDecision(int amount){
 		if(begItem == (int)BegItem.Money){
 			//update raw image of money and quantity
 			//decisonRawImage.GetComponent<RawImage>().texture = ;
 			decisonQuantityTextComp.text = amount + "";
-			subactionPanelBadGuy.SetActive(false);
-			subactionPanelNeutralGuy.SetActive(false);
+			subactionPanel.SetActive(false);
 			decisionPanel.SetActive(true);
 			//update player money
 			PlayerData.playerData.money += amount;
 			PlayerData.playerData.UpdateStatsDisplay();
 		}
 	}
-	public void MakeDecision(float NPCtemper){
-		float r = UnityEngine.Random.Range(0,1);
+	public int MakeDecision(float NPCtemper){
+		float r = UnityEngine.Random.Range(0,10)/10.0f;
 		int money = 0;
-		if(begItem == (int)BegItem.Money){
-			if(NPCtemper > 0.6){
-				if(subactionChoice == (int)SubactionChoice.Bad){
-					if(r > 0.9){
-						money = 1;
-					}
-				}else if(subactionChoice == (int)SubactionChoice.Neutral){
-					if(r > 0.6){
-						money = 1;
-					}
-				}else if(subactionChoice == (int)SubactionChoice.Good){
-					if(r > 0.4){
-						money = Mathf.FloorToInt(UnityEngine.Random.Range(1,3));
-					}
+		if(NPCtemper > 0.4){
+			if(subactionChoice == (int)SubactionChoice.Bad){
+				//diaglogueTextComp.text = "";
+				if(r > 0.8){
+					money = 1;
 				}
-			}else{
-				//doesn't give anything
-				money = 0;
-			}
-			ShowDecision(money);
-
-		}else if(begItem == (int)BegItem.Food){
-			if(NPCtemper > 0.4){
-				if(subactionChoice == (int)SubactionChoice.Bad){
-
-				}else if(subactionChoice == (int)SubactionChoice.Neutral){
-
-				}else if(subactionChoice == (int)SubactionChoice.Good){
-
+			}else if(subactionChoice == (int)SubactionChoice.Neutral){
+				//diaglogueTextComp.text = "";
+				if(r > 0.5){
+					money = 1;
 				}
-			}else{
-				//doesn't give anything
+			}else if(subactionChoice == (int)SubactionChoice.Good){
+				//diaglogueTextComp.text = "";
+				if(r > 0.3){
+					money = Mathf.FloorToInt(UnityEngine.Random.Range(1,3));
+					Debug.Log("good" + money);
+				}
 			}
+		}else{
+			//doesn't give anything
+			money = 0;
 		}
+		return money;
+
 	}
-	IEnumerator Interaction(float NPCtemper, float NPCcourage){
+	IEnumerator Interaction(float NPCtemper, bool beggedToday){
 		
 		while(GameControl.gameState == (int)GameControl.GameState.HumanInteraction){
+			//disable mouselook
+			GameControl.player.GetComponent<PlayerController>().disableMove = true;
+			GameControl.player.GetComponent<PlayerController>().EnableMouseLook(false);
 			if(dialogueState == (int)DialogueState.Greeting){
 				diaglogueTextComp.text = greetings[0];
 				yield return new WaitForSeconds(0.5f);
@@ -182,54 +162,48 @@ public class DialogueSystem : MonoBehaviour {
 				dialogueState = (int)DialogueState.EndDialogue;
 			}
 			else if(dialogueState == (int)DialogueState.MainActionBegMoney){
-				yield return new WaitForSeconds(1f);
+				yield return new WaitForSeconds(0.5f);
 				begItem = (int)BegItem.Money;
 				if(NPCtemper < 0.6){
 					//bad temper
-					dialogueState = (int)DialogueState.SubActionBegBadNPC;
+					diaglogueTextComp.text = "urhhh...god...why?";
 				}else{
 					//neutral
-					dialogueState = (int)DialogueState.SubActionBegNeutralNPC;
+					diaglogueTextComp.text = "I'm sorry, but may I ask why?";	
 				}
+				dialogueState = (int)DialogueState.SubActionBeg;
 			}
-			else if(dialogueState == (int)DialogueState.MainActionBegFood){
-				yield return new WaitForSeconds(1f);
-				begItem = (int)BegItem.Food;
-				if(NPCtemper < 0.6){
-					//bad temper
-					dialogueState = (int)DialogueState.SubActionBegBadNPC;
-				}else{
-					//neutral
-					dialogueState = (int)DialogueState.SubActionBegNeutralNPC;
-				}
-			}
-			else if(dialogueState == (int)DialogueState.SubActionBegBadNPC){
+			else if(dialogueState == (int)DialogueState.SubActionBeg){
 				//if player chose badguy 0, 1, 2
-				yield return new WaitForSeconds(1f);
-				ShowSubactionsBadGuy();
-				//give money or food
+				yield return new WaitForSeconds(0.5f);
+				ShowSubactions();
+				//give money
 				
 				//dialogueState = (int)DialogueState.Decision;
 
-			}else if(dialogueState == (int)DialogueState.SubActionBegNeutralNPC){
-				//if player chose neutralguy 0,1,2
-				yield return new WaitForSeconds(1f);
-				ShowSubactionsNeutralGuy();
-				//give money or food
-				
-				//dialogueState = (int)DialogueState.Decision;
 			}
 			else if(dialogueState == (int)DialogueState.Decision){
 				yield return new WaitForSeconds(1f/30f);
 				//TODO: make decison
 
-				MakeDecision(NPCtemper);
-				yield return new WaitForSeconds(2f);
+				int money = MakeDecision(NPCtemper);
+				//show text
+				if(money > 0){
+					diaglogueTextComp.text = "Alright, here you go man!";
+				}else{
+					diaglogueTextComp.text = "Sorry I don't have change on me.";
+				}
+				yield return new WaitForSeconds(1f/3f);
+				ShowDecision(money);
+				yield return new WaitForSeconds(3f);
 				dialogueState = (int)DialogueState.EndDialogue;
 			}
 			else if(dialogueState == (int)DialogueState.EndDialogue){
+				ResetDialogueSys();
 				GameControl.gameState = (int)GameControl.GameState.PlayerNavigating;
 				diaglogueCanvas.SetActive(false);
+				GameControl.player.GetComponent<PlayerController>().EnableMouseLook(true);
+				GameControl.player.GetComponent<PlayerController>().disableMove = false;
 			}
 
 		}//end while
@@ -238,24 +212,21 @@ public class DialogueSystem : MonoBehaviour {
 	public void OnClick_BegForMoney(){
 		dialogueState = (int)DialogueState.MainActionBegMoney;
 	}
-	public void OnClick_BegForFood(){
-		dialogueState = (int)DialogueState.MainActionBegFood;
-	}
 	public void OnClick_Nevermind(){
 		dialogueState = (int)DialogueState.MainActionCancelDialogue;
 	}
 
-	public void OnClick_SubactionBadGuy(int choice){
-		subactionChoice = choice;
-		dialogueState = (int)DialogueState.Decision;
-	}
-	public void OnClick_SubactionNeutralGuy(int choice){
+	public void OnClick_Subaction(int choice){
 		subactionChoice = choice;
 		dialogueState = (int)DialogueState.Decision;
 	}
 	//called when interaction is over
 	public void ResetDialogueSys(){
-
+		diaglogueCanvas.SetActive(false);
+		actionPanel.SetActive(false);
+		subactionPanel.SetActive(false);
+		decisionPanel.SetActive(false);
+		dialogueState = (int)DialogueState.Greeting;
 	}
 	// Update is called once per frame
 	void Update () {
