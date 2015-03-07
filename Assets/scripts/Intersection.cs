@@ -26,7 +26,6 @@ public class Intersection : MonoBehaviour {
 	
 	}
 	void OnCollisionStay(){
-		Debug.Log("collision enter");
 	}
 	public static int GetOppositeDirection(int d){
 		if(d == 0){

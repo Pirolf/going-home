@@ -31,6 +31,12 @@ public class NPC : MonoBehaviour {
 		courage = UnityEngine.Random.Range(0,1);
 	}
 	void Start () {
+		if(gameObject.name.Equals("NPC_rigged")){
+			Animation anim = gameObject.GetComponent<Animation>();
+			foreach (AnimationState state in anim) {
+            	state.speed = 4F;
+        	}
+		}
 		StartCoroutine(NPCMove());
 	}
 	IEnumerator NPCMove(){
