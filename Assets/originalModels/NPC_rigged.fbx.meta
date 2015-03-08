@@ -74,7 +74,7 @@ ModelImporter:
     400064: man
     400066: //RootNode
     4300000: man
-    7400000: Armature|ArmatureAction
+    7400000: walk
     9500000: //RootNode
     11100000: //RootNode
     13700000: man
@@ -95,7 +95,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature|ArmatureAction
+      name: walk
       takeName: Armature|ArmatureAction
       firstFrame: 0
       lastFrame: 80

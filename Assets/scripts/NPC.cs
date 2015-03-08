@@ -39,6 +39,21 @@ public class NPC : MonoBehaviour {
 		}
 		StartCoroutine(NPCMove());
 	}
+	void Update(){
+		if(gameObject.name.Equals("NPC_rigged")){
+			Animation anim = gameObject.GetComponent<Animation>();
+			if(GameControl.gameState != (int)GameControl.GameState.HumanInteraction){
+				
+				foreach (AnimationState state in anim) {
+            		state.speed = 4F;
+        		}
+        	}else{
+        		foreach (AnimationState state in anim) {
+            		state.speed = 0F;
+        		}
+        	}
+		}
+	}
 	IEnumerator NPCMove(){
 		while(true){
 			yield return new WaitForSeconds(1f / 30f);
@@ -88,12 +103,13 @@ public class NPC : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other){
 		if(other.gameObject.name.Equals("homelessPlayer")){
+			
 			GameControl.player.GetComponent<PlayerController>().disableMove = true;
 			GameControl.gameState = (int)GameControl.GameState.HumanInteraction;
 			Debug.Log(temper);
 			beggedToday = true;
 			DialogueSystem.dialogueSystem.StartInteraction(temper, beggedToday);
-
+			
 		}
 	}
 

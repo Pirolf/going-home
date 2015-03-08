@@ -81,6 +81,12 @@ public class DialogueSystem : MonoBehaviour {
 	void Start () {
 	
 	}
+	void Update(){
+		if(GameControl.gameState != (int)GameControl.GameState.HumanInteraction){
+			StopCoroutine("Interaction");
+			Debug.Log("coroutine stopped");
+		}
+	}
 	public void ShowMainActions(){
 		actionPanel.SetActive(true);
 	}
@@ -227,10 +233,6 @@ public class DialogueSystem : MonoBehaviour {
 		subactionPanel.SetActive(false);
 		decisionPanel.SetActive(false);
 		dialogueState = (int)DialogueState.Greeting;
-	}
-	// Update is called once per frame
-	void Update () {
-	
 	}
 
 }
