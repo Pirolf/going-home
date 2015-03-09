@@ -16,25 +16,7 @@ public class Restaurant : MonoBehaviour{
 	public Food coke;
 	public Food cheeseBurger;
 
-	/*
-	void OnCollisionEnter(Collision collision){
-		Debug.Log("hit!");
-		GameControl.colliderPos = gameObject.transform.position;
-		//save location
-		GameControl.gameControl.SaveLocInMain();
-		//switch to restaurant scene
-		//Application.LoadLevel("fastfoodShop");
-		//go to restaurant
-		GameControl.player.transform.position = playerSpawnLoc;
-		GameControl.player.transform.rotation = Quaternion.identity;
-		Camera.main.gameObject.transform.rotation = Quaternion.identity;
-		GameControl.player.GetComponent<PlayerController>().EnableMouseLook(false);
-		//enable fast food menu
-		fastfoodMenuCanvas.SetActive(true);
-		leaveCanvas.SetActive(true);
-		GameControl.player.GetComponent<PlayerController>().disableMove = true;
-	}
-	*/
+	
 	//return to main scene
 	public void OnLeave(){
 		PlayerController pc = GameControl.player.GetComponent<PlayerController>();
