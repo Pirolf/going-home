@@ -101,7 +101,8 @@ public class NPC : MonoBehaviour {
 
 	}
 	
-	void OnTriggerEnter(Collider other){
+	void OnCollisionEnter(Collision other){
+		Debug.Log("npc collides player");
 		if(other.gameObject.name.Equals("homelessPlayer")){
 			
 			GameControl.player.GetComponent<PlayerController>().disableMove = true;

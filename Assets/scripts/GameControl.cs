@@ -20,14 +20,7 @@ public class GameControl : MonoBehaviour {
 
 
 
-	//return to main scene
-	public void OnLeaveCurrScene(GameObject leaveCanvas){
-		Debug.Log("back to outside");
-		
-		leaveCanvas.SetActive(false);
-		player.GetComponent<PlayerController>().EnableMouseLook(true);
-		RecoverLocInMain();
-	}
+	
 	//only should be called when exit main scene
 	public void SaveLocInMain(){
 		locInMain = player.transform.position;

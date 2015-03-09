@@ -84,7 +84,6 @@ public class DialogueSystem : MonoBehaviour {
 	void Update(){
 		if(GameControl.gameState != (int)GameControl.GameState.HumanInteraction){
 			StopCoroutine("Interaction");
-			Debug.Log("coroutine stopped");
 		}
 	}
 	public void ShowMainActions(){
