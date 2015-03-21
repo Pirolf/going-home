@@ -64,8 +64,8 @@ public class PlayerData : MonoBehaviour {
 
 		if(f.quantity <= 0){
 			//delete raw image
-			foodUI.transform.Find("RawImage").gameObject
-				.GetComponent<RawImage>().texture = null;
+			foodUI.transform.Find("sprite").gameObject
+				.GetComponent<Image>().sprite = null;
 			//delete currFood
 			string foodName = f.gameObject.name;
 
@@ -110,8 +110,8 @@ public class PlayerData : MonoBehaviour {
 
 			if(curr.name.Equals(f.index + "")){
 				//update raw img
-				GameObject img = curr.transform.Find("RawImage").gameObject;
-				img.GetComponent<RawImage>().texture = foodToUpdate.texture;
+				GameObject img = curr.transform.Find("sprite").gameObject;
+				img.GetComponent<Image>().sprite = foodToUpdate.icon;
 				//upadte quantity display
 				GameObject quantityText = curr.transform.Find("quantity").gameObject;
 				if(quantityText == null){

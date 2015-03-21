@@ -13,7 +13,7 @@ public class Food : MonoBehaviour {
 	public int index = -1; //food index in the inventory, < 0 means not in inventory
 	public int uiIndex = -1;
 	public int quantity = 0; //amount of food in foods[] inventory
-	public Texture texture;
+	public Sprite icon;
 
 	public GameObject totalText;
 	public GameObject quantityText;
