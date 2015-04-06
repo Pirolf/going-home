@@ -82,7 +82,7 @@ public class Restaurant : MonoBehaviour{
 		foreach(Food f in menu){
 			int q = Mathf.FloorToInt(Random.Range(0, 10));
 			f.total = q;
-			Debug.Log("food: " + q);
+			//Debug.Log("food: " + q);
 			f.totalTextComp.text = q + "";
 			f.priceTextComp.text = f.price + "";
 		}

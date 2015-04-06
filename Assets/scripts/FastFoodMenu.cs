@@ -47,7 +47,7 @@ public class FastFoodMenu : MonoBehaviour {
 	public void OnAddFoodQuantity(GameObject foodPrefab){
 		Food f = foodPrefab.GetComponent<Food>();
 		string foodName = f.name;
-		Debug.Log(f.name);
+//		Debug.Log(f.name);
 		if(foodName.Equals("Fried Chicken")){
 			if(friedChickenQ < f.total){
 				friedChickenQ ++;

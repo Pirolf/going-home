@@ -7,17 +7,19 @@ public class NPC_NavMeshAgent : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		nma = gameObject.GetComponent<NavMeshAgent>();
+		nma.SetDestination(target.position);
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(GameControl.gameState == (int) GameControl.GameState.PlayerNavigating){
-
+			nma.enabled = true;
 			nma.SetDestination(target.position);
 			nma.Resume();
 		}else{
-			nma.Stop();
+			nma.enabled = false;
+			//nma.Stop();
 		}
 		//transform.eulerAngles = new Vector3(transform.eulerAngles.x, 0, transform.eulerAngles.z);
 	}

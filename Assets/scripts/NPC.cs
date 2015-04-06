@@ -24,7 +24,6 @@ public class NPC : MonoBehaviour {
 	}
 	void OnEnable(){
 		InitPersonality();
-		Debug.Log(temper);
 	}
 	public void InitPersonality(){
 		temper = UnityEngine.Random.Range(0,10) / 10.0f;
@@ -100,16 +99,15 @@ public class NPC : MonoBehaviour {
 		
 
 	}
-	
 	void OnCollisionEnter(Collision other){
 		Debug.Log("npc collides player");
 		if(other.gameObject.name.Equals("homelessPlayer")){
 			
 			GameControl.player.GetComponent<PlayerController>().disableMove = true;
 			GameControl.gameState = (int)GameControl.GameState.HumanInteraction;
-			Debug.Log(temper);
+		
 			beggedToday = true;
-			DialogueSystem.dialogueSystem.StartInteraction(temper, beggedToday);
+//			DialogueSystem.dialogueSystem.StartInteraction(temper, beggedToday);
 			
 		}
 	}

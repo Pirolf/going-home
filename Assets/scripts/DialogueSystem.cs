@@ -94,12 +94,13 @@ public class DialogueSystem : MonoBehaviour {
 		subactionPanel.SetActive(true);
 
 	}
-	public void StartInteraction(float NPCtemper, bool NPCbeggedToday){
+	public void StartInteraction(NPCScript npc){
 		//enable diaglogue canvas
 		//set init text
 		dialogueState = (int)DialogueState.Greeting;
 		diaglogueCanvas.SetActive(true);
-		StartCoroutine(Interaction(NPCtemper, NPCbeggedToday));
+		//StartCoroutine(Interaction(NPCtemper, NPCbeggedToday));
+		StartCoroutine(Interaction(npc));
 	}
 	public void ShowDecision(int amount){
 		if(begItem == (int)BegItem.Money){
@@ -141,7 +142,7 @@ public class DialogueSystem : MonoBehaviour {
 		return money;
 
 	}
-	IEnumerator Interaction(float NPCtemper, bool beggedToday){
+	IEnumerator Interaction(NPCScript npc){
 		
 		while(GameControl.gameState == (int)GameControl.GameState.HumanInteraction){
 			//disable mouselook
@@ -167,9 +168,10 @@ public class DialogueSystem : MonoBehaviour {
 				dialogueState = (int)DialogueState.EndDialogue;
 			}
 			else if(dialogueState == (int)DialogueState.MainActionBegMoney){
+				npc.beggedToday = true;
 				yield return new WaitForSeconds(0.5f);
 				begItem = (int)BegItem.Money;
-				if(NPCtemper < 0.6){
+				if(npc.temper < 0.6){
 					//bad temper
 					diaglogueTextComp.text = "urhhh...god...why?";
 				}else{
@@ -191,7 +193,7 @@ public class DialogueSystem : MonoBehaviour {
 				yield return new WaitForSeconds(1f/30f);
 				//TODO: make decison
 
-				int money = MakeDecision(NPCtemper);
+				int money = MakeDecision(npc.temper);
 				//show text
 				if(money > 0){
 					diaglogueTextComp.text = "Alright, here you go man!";
@@ -200,15 +202,17 @@ public class DialogueSystem : MonoBehaviour {
 				}
 				yield return new WaitForSeconds(1f/3f);
 				ShowDecision(money);
-				yield return new WaitForSeconds(3f);
+				yield return new WaitForSeconds(2f);
 				dialogueState = (int)DialogueState.EndDialogue;
 			}
 			else if(dialogueState == (int)DialogueState.EndDialogue){
-				ResetDialogueSys();
-				GameControl.gameState = (int)GameControl.GameState.PlayerNavigating;
+				Debug.Log("here");
 				diaglogueCanvas.SetActive(false);
-				GameControl.player.GetComponent<PlayerController>().EnableMouseLook(true);
-				GameControl.player.GetComponent<PlayerController>().disableMove = false;
+				PlayerController.self.EnableMouseLook(true);
+				PlayerController.self.disableMove = false;
+				GameControl.gameState = (int)GameControl.GameState.PlayerNavigating;
+				//Debug.Log("from dialogue: " + GameControl.gameState);
+				ResetDialogueSys();
 			}
 
 		}//end while

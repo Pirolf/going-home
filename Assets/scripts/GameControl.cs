@@ -14,7 +14,8 @@ public class GameControl : MonoBehaviour {
 	public static Vector3 colliderPos; //collider with houses
 	public enum GameState{
 		PlayerNavigating,
-		HumanInteraction
+		HumanInteraction,
+		BrowsingMenu
 	};
 	public static int gameState = (int)GameState.PlayerNavigating;
 
@@ -44,7 +45,7 @@ public class GameControl : MonoBehaviour {
 	
 	
 	void Awake(){
-		player = GameObject.Find("homelessPlayer");
+		player = GameObject.Find("homelessPlayer").gameObject;
 		playerDataCanvas = GameObject.Find("PlayerDataCanvas");
 		
 	}
